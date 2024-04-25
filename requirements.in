@@ -1,0 +1,14 @@
+autopep8
+jupyter
+matplotlib
+numpy
+open3d
+pandas
+PyYAML
+pytest
+python-dotenv
+pydantic
+pymesh
+scikit-learn
+scipy
+vtk
