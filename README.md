@@ -42,6 +42,17 @@ conda env export > environment.yml
 conda remove --name vps --all
 ```
 
+## References
+
+There are many works in the haptics literature which deal 
+
+- McNeely
+- Barbic
+- Sagardia
+
+## Interesting Links
+
+TBD.
 
 ## Authorship
 
