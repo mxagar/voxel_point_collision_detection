@@ -31,7 +31,6 @@ python -m pip install -r requirements.txt
 # i.e., update environment
 pip-compile requirements.in
 pip-sync requirements.txt
-python -m pip install -r requirements.txt
 
 # Optional (in the future): To install the package
 python -m pip pip install .
@@ -52,7 +51,8 @@ There are many works in the haptics literature which deal
 
 ## Interesting Links
 
-TBD.
+- Popular 3D models: [common-3d-test-models](https://github.com/alecjacobson/common-3d-test-models)
+- TriMesh source code with many useful 3D models: [trimesh](https://github.com/mikedh/trimesh)
 
 ## Authorship
 
