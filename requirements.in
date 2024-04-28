@@ -8,6 +8,8 @@ PyYAML
 pytest
 python-dotenv
 pydantic
+pyvista[jupyter]>=0.38.1
+trame
 trimesh[all]
 scikit-learn
 scipy
