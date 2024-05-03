@@ -9,6 +9,7 @@ pytest
 python-dotenv
 pydantic
 pyvista[jupyter]>=0.38.1
+torch
 trame
 trimesh[all]
 scikit-learn
