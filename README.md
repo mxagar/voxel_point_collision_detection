@@ -15,17 +15,6 @@ The implementation is intentionally centered on NumPy-backed data structures and
 
 ## Installation
 
-### Option 1: use the provided conda environment
-
-```bash
-conda env create -f conda.yaml
-conda activate vps
-python -m pip install -r requirements.txt
-python -m pip install -e .
-```
-
-### Option 2: use a plain virtual environment
-
 ```bash
 # Create conda env
 conda env create -f conda.yaml
