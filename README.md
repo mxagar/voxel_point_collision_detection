@@ -42,8 +42,8 @@ Validation commands:
 
 ```bash
 pytest -q
-flake8 python tests
-pytype python
+flake8 src tests
+pytype src
 ```
 
 ## Project Layout
