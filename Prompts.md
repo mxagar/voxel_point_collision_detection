@@ -89,6 +89,8 @@ Before finishing the summary, have a look at the notebooks/ folder. I Have some 
 
 ## 3
 
+> I would like to prompt the codex agent to build a project. To that end, I have created the following main prompt. I attach some references I explain in it, too: notebooks/numpy_tests.ipynb, doc/Sagardia_PhD_Chapter3_Summary.md.
+
 Now, I would like to start with the re-implementation. I want to use Python for that, and I want to use numpy for the data structures and algorithms. I also want to use TriMesh and Open3D for 3D input parsing and visualization, but I prefer TriMesh. However, the implementation of the data structures and the algorithms should be done by hand, using numpy for the data structures and algorithms.
 
 Use the definitions in the notebook notebooks/numpy_tests.ipynb and the summary doc/Sagardia_PhD_Chapter3_Summary.md as reference for the data structures and the algorithms. 
@@ -151,4 +153,455 @@ Additional chores and notes:
 - Ignore the cpp/ folder for now
 - If you have any technical/methodological doubts, check the doc/Sagardia_PhD_Chapter3_Summary.md file. You can also check the notebooks/ folder for some tests and experiments. Also, you are encouraged to ask me if you have any doubts.
 - Use type hints in the code, and docstrings in the functions and classes. Follow PEP 8 style guide for Python code.
+
+### Output
+
+You are re-implementing, in Python, a voxelmap–pointshell proximity and collision framework inspired by the VPS approach and the reference material in this repository.
+
+Your task is to build a clean, modular, testable Python package that re-implements the core data structures and algorithms by hand using numpy, while using trimesh and optionally open3d only for 3D IO and visualization support.
+
+Implement a Python-first reimplementation of the core system with these capabilities:
+1.	Parse a mesh from a 3D file.
+2.	Represent that mesh internally with our own NumPy-backed data structures.
+3.	Generate a voxelmap from the mesh.
+4.	Generate a pointshell from the mesh.
+5.	Run proximity queries between a transformed pointshell and a voxelmap.
+6.	Run collision queries based on the proximity results, including penalty-based wrench computation.
+7.	Visualize the mesh, voxelmap, pointshell, and later the query results.
+8.	Provide tests, typing, packaging metadata, and a clean project structure suitable for future publication.
+
+Mandatory implementation constraints:
+- Use Python.
+- Use NumPy for the core data structures and algorithms.
+- Use trimesh and optionally open3d only for:
+- mesh loading / parsing
+- convenience visualization
+- optional nearest-surface queries during generation
+- Do not delegate the core data structures or core collision/proximity logic to third-party libraries.
+- The triangle mesh representation, voxelmap representation, pointshell representation, coordinate transforms, traversal, proximity evaluation, and penalty-force computation must be implemented by hand with NumPy.
+- Prefer trimesh over open3d unless there is a clear reason not to.
+- Ignore the cpp/ folder for now.
+
+Repository references to use:
+- notebooks/numpy_tests.ipynb
+- doc/Sagardia_PhD_Chapter3_Summary.md
+
+Use them as technical guidance, not as a rigid spec. The summary is intentionally not a strict blueprint; if a cleaner or more Pythonic design achieves the same functional goals, prefer that.
+
+Also inspect the notebooks/ folder for relevant experiments and ideas.
+
+At minimum, implement these modules:
+- python/.../mesh.py
+- python/.../voxelmap.py
+- python/.../pointshell.py
+- python/.../generate_voxelmap.py
+- python/.../generate_pointshell.py
+- python/.../proximity_query.py
+- python/.../collision_detection.py
+- python/.../viewer.py
+
+Also, implement the following:
+- add tests under tests/
+- update requirements.in
+- ensure pinned dependencies are reflected appropriately
+- populate pyproject.toml with package metadata
+- prepare the package layout so that it can be published later
+
+Use the environment described by:
+- conda.yaml
+- requirements.in
+
+Use models from data/models/.
+
+Work incrementally. For each major step:
+1.	implement the code
+2.	add or update tests
+3.	run tests
+4.	fix failures
+5.	keep the code lint-clean and type-clean
+
+Do not try to do everything in one giant pass if that reduces correctness.
+
+You should follow four implementation phases or steps, explained in the sections below:
+
+- Step 1: Core data structures
+- Step 2: Runtime algorithms
+- Step 3: Generation modules
+- Step 4: Visualization
+
+**Step 1: Core data structures**
+
+Implement the following core classes.
+
+1) Mesh
+
+Purpose: wrapper around a 3D model loaded from disk.
+
+Requirements:
+- Load meshes via trimesh primarily.
+- Internally store mesh data in NumPy arrays that we control.
+- Expose at least:
+- vertices
+- faces
+- face normals
+- vertex normals if available or computable
+- axis-aligned bounding box
+- centroid / center
+- transforms between mesh/local/world coordinates if needed
+- Provide clean, typed accessors and validation utilities.
+- The Mesh class is a mesh wrapper, but the internal triangle mesh representation must be our own NumPy-backed representation, not just a thin pass-through to a trimesh.Trimesh object.
+
+Suggested internal representation:
+- vertices: NDArray[float32 | float64] with shape (V, 3)
+- faces: NDArray[int32 | int64] with shape (F, 3)
+- normals and metadata as separate arrays
+
+The Mesh class should not be embedded into Voxelmap or Pointshell. It is an input source for generation, not a dependency of the runtime structures.
+
+2) Voxelmap
+
+Purpose: regular 3D grid storing integer voxel values.
+
+Requirements:
+- Dense 3D array of integers.
+- Each voxel stores one integer value:
+- 0: surface voxel / triangle-containing voxel
+- positive: inside the object, increasing with depth
+- negative: outside the object, decreasing away from the surface
+- The class must not store triangles.
+- The class must not generate itself from a mesh.
+- It must support:
+- construction from raw data + metadata
+- indexing and bounds checks
+- world/local coordinate ↔ voxel index conversion
+- serialization to ASCII
+- loading from ASCII
+- query helpers needed by downstream algorithms
+- optional storage of auxiliary fields later if useful, but the first version should focus on the integer layer field
+
+At minimum the metadata should include:
+- grid shape
+- voxel size / spacing
+- origin or bounding box
+- dtype
+- axis conventions
+
+Design goal:
+- downstream queries should be able to transform a point into voxelmap coordinates and retrieve its voxel value efficiently
+
+3) Pointshell
+
+Purpose: hierarchical set of 6D surface samples.
+
+Requirements:
+- Each point contains:
+- a 3D position
+- a 3D normal
+- The points are grouped into N disjoint spheres / patches.
+- Default target number of spheres: N = 256
+- The class must not store the mesh.
+- The class must not generate itself from a mesh.
+- It must support:
+- construction from raw points, normals, sphere metadata, and LOD metadata
+- serialization to ASCII
+- loading from ASCII
+- traversal by sphere first, then by points inside sphere
+- partial traversal of each sphere by percentage of points
+- support for LOD cutoffs within each sphere
+
+Each sphere must know at least:
+- which point range or point ids belong to it
+- its center
+- its radius
+- where the LOD level boundaries occur among its points
+
+Important structural requirement:
+- traversal starts at the sphere level
+- once a sphere is selected, traversal continues over the points in that sphere
+- points inside a sphere must be ordered from coarser to finer LOD
+- all points within a sphere represent the same surface patch at different sampling densities
+
+Do not use minimum bounding spheres. Use instead:
+- sphere center = centroid of the points in the sphere
+- sphere radius = maximum distance from centroid to any point in the sphere
+
+That approximation is sufficient.
+
+**Step 2: Runtime algorithms**
+
+Implement the runtime query algorithms.
+
+1) proximity_query.py
+
+Implement proximity queries between a transformed pointshell and a voxelmap.
+
+Requirements:
+- The main query should return the n closest or deepest points from the pointshell with respect to the voxelmap.
+- Default n = 1
+- For each returned point, provide at least:
+- point id
+- sphere id
+- transformed point position
+- transformed normal
+- signed distance / penetration value
+- Optionally support returning the closest surface voxel id or related closest-surface information, but treat that as a second-stage refinement, not required for the initial collision pipeline.
+
+Runtime semantics:
+- transform candidate points from the pointshell frame into the voxelmap frame
+- query voxel values
+- interpret values consistently as signed proximity:
+- positive = penetration / inside
+- zero = surface
+- negative = separation / outside
+
+Traversal strategy:
+- first visit spheres
+- transform each sphere into voxelmap coordinates
+- estimate likely collision / proximity value for each sphere
+- rank spheres in a priority queue or sorted order
+- then visit points within the best candidate spheres
+
+The sphere phase acts as the broad phase / prioritization stage.
+
+The first implementation can be approximate, but it must be structurally compatible with this hierarchical traversal.
+
+2) collision_detection.py
+
+Implement collision detection and penalty-based wrench computation.
+
+Requirements:
+- First run the proximity query.
+- Then compute penalty-based force and torque from colliding points only.
+- Use only points with positive penetration values for the wrench computation.
+- Return at least:
+- collision flag
+- colliding point ids
+- penetrations
+- total force
+- total torque
+- any useful intermediate data for debugging
+
+Use the methodology described in the summary document, but keep the design clean and Pythonic.
+
+The first implementation may omit advanced dynamics terms if necessary, but it must correctly implement the basic penalty-based accumulation over colliding points.
+
+**Step 3: Generation modules**
+
+These modules generate the runtime data structures from a mesh.
+
+1) generate_voxelmap.py
+
+Purpose: generate a Voxelmap from a Mesh.
+
+Requirements:
+- Separate module, not a method on Voxelmap
+- Generate:
+- surface voxels
+- inside/outside labels
+- integer layer values
+- Surface voxels should have value 0
+- Interior layers positive
+	- Exterior layers negative
+
+Implementation guidance:
+- triangle/voxel intersection may use SAT or triangle-box intersection ideas
+- however, a Pythonic equivalent strategy is acceptable if it produces a compatible voxelmap
+- flood-fill is acceptable and likely preferable for inner/outer labeling
+
+A good practical pipeline is:
+1.	identify surface voxels
+2.	flood-fill from volume boundary to mark exterior
+3.	mark remaining non-surface voxels as interior
+4.	propagate integer layer values inward and outward
+
+You may use library support for mesh loading or coarse voxelization support if needed, but the resulting voxelmap logic and representation must be ours.
+
+Document any approximations you choose.
+
+2) generate_pointshell.py
+
+Purpose: generate a Pointshell from a Mesh.
+
+Requirements:
+- Separate module, not a method on Pointshell
+- The generated points must lie on or very near the mesh surface
+- Points should cover the mesh surface reasonably uniformly
+- Normals should be reliable and consistently oriented
+
+Compatible generation strategy:
+- generate a voxelmap of the object
+- use surface voxel centers as candidate samples
+- project candidates to the mesh surface if possible
+- derive normals from the voxel field gradient or another robust method
+- cluster the points into N disjoint surface patches
+- create one sphere per patch
+- order points inside each patch by LOD from coarse to fine
+
+The exact clustering / hierarchy construction is flexible.
+
+The original implementation used a bottom-up hierarchical clustering procedure. You may also use a top-down approach or another reasonable strategy, as long as the final Pointshell remains compatible with the runtime traversal requirements.
+
+Desired properties:
+- spheres contain roughly similar numbers of points
+- points in each sphere correspond to one surface patch
+- the class can traverse only a percentage of the points in each sphere
+- the sphere metadata clearly records LOD boundaries
+
+If the exact requested N is not ideal, it is acceptable to map it to the closest feasible hierarchy size, but document that behavior clearly.
+
+**Step 4: Visualization**
+
+1) viewer.py
+
+Implement visualization for:
+- mesh
+- voxelmap
+- pointshell
+
+Do this first.
+
+Only after that, extend visualization to show query results such as:
+- transformed pointshell
+- colliding points
+- deepest / closest points
+- force and torque vectors if useful
+
+Prefer trimesh for simple viewing and open3d only when it clearly helps.
+
+Visualization code should be separated from core algorithmic code.
+
+**Tests and validation**
+
+Use pytest.
+
+As each step is implemented, add tests in tests/.
+
+At minimum, test the following.
+
+Mesh tests
+- mesh loads correctly from sample models
+- vertices/faces have correct shapes and dtypes
+- bounds and normals are valid
+- internal representation matches expectations
+
+Voxelmap tests
+- coordinate-to-index mapping
+- index-to-coordinate mapping if implemented
+- bounds checking
+- serialization roundtrip
+- loading/saving ASCII
+- layer semantics on synthetic examples
+
+Pointshell tests
+- serialization roundtrip
+- sphere metadata consistency
+- all points belong to exactly one sphere
+- LOD boundaries are valid
+- traversal by percentage behaves correctly
+- normals are unit length within tolerance
+
+Generation tests
+- voxelmap generation from a simple watertight mesh
+- pointshell generation from a simple watertight mesh
+- generated structures are non-empty and internally consistent
+- layer sign convention is respected
+- points lie near the mesh surface within tolerance
+
+Proximity and collision tests
+- synthetic cases with known transforms
+- no-collision case
+- shallow penetration case
+- deeper penetration case
+- force and torque sanity checks
+- closest/deepest-point ranking
+
+Use small deterministic fixtures when possible.
+
+**Code quality requirements**
+
+These are mandatory:
+- use type hints throughout
+- use docstrings for public classes and functions
+- follow PEP 8
+- keep modules focused and modular
+- avoid overly clever abstractions
+- prefer explicit data contracts
+
+Validation tools:
+- pytest
+- flake8
+- pytype
+
+Make sure:
+- tests pass
+- linting passes
+- type checking passes
+
+If pytype is too restrictive in a few places, solve it cleanly with better annotations rather than ignoring errors unless absolutely necessary.
+
+**Packaging and project hygiene**
+
+Also complete these chores:
+- update requirements.in
+- pin dependencies appropriately
+- ensure dependency versions are reflected consistently
+- populate pyproject.toml with package metadata
+- make the package installable
+- prepare the structure so publishing later is straightforward
+- keep public APIs reasonably stable and documented
+
+Use a modern package layout and avoid ad hoc scripts unless they are clearly marked as utilities or examples.
+
+**Design preferences and decisions**
+
+Use these preferences unless there is a strong reason not to:
+- numpy.float32 or float64 for geometry arrays, chosen consistently
+- int32 or int64 for indices, chosen consistently
+- immutable-ish metadata where practical
+- dataclasses are welcome when useful
+- clear separation between:
+- data containers
+- generation code
+- runtime query code
+- visualization code
+
+Prefer readability and correctness over premature optimization.
+
+However, where the notebook clearly suggests vectorized NumPy operations, preserve that vectorized approach.
+
+**Ambiguity policy**
+
+If you encounter technical or methodological uncertainty:
+1.	first consult:
+- doc/Sagardia_PhD_Chapter3_Summary.md
+- notebooks/
+2.	choose the simplest design that preserves compatibility with the intended VPS-style workflow
+3.	document the decision in code comments or module docstrings
+4.	if a major architectural ambiguity remains, ask the user
+
+Do not block progress on minor uncertainties.
+
+**Definition of done**
+
+This task is done when:
+1.	the core modules exist and are implemented
+2.	the data structures are NumPy-backed and not library-owned
+3.	voxelmap and pointshell generation work on sample models
+4.	proximity queries work on transformed inputs
+5.	collision detection returns meaningful force/torque outputs
+6.	visualization can display the structures
+7.	tests pass
+8.	linting passes
+9.	type checking passes
+10.	package metadata and dependency files are in good shape
+
+
+**Final reporting**
+
+At the end of the implementation, provide:
+1.	a short summary of what was implemented
+2.	major design decisions taken
+3.	known limitations
+4.	next recommended steps
+5.	commands used to run tests, lint, and type checks
 
