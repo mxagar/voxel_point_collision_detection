@@ -8,9 +8,9 @@ import numpy as np
 import pytest
 import trimesh
 
-from python.mesh import Mesh
-from python.pointshell import Pointshell
-from python.voxelmap import Voxelmap
+from src.mesh import Mesh
+from src.pointshell import Pointshell
+from src.voxelmap import Voxelmap
 
 
 @pytest.fixture()

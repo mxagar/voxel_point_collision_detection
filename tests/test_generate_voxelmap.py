@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from python.generate_voxelmap import generate_voxelmap
-from python.mesh import Mesh
+from src.generate_voxelmap import generate_voxelmap
+from src.mesh import Mesh
 
 
 def test_generate_voxelmap_from_box(box_mesh_path) -> None:

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from python.voxelmap import Voxelmap
+from src.voxelmap import Voxelmap
 
 
 def test_coordinate_index_roundtrip(synthetic_voxelmap: Voxelmap) -> None:

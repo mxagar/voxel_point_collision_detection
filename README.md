@@ -48,7 +48,7 @@ pytype python
 
 ## Project Layout
 
-- [python/](./python): package source code
+- [src/](./src): package source code
 - [tests/](./tests): pytest suite
 - [notebooks/](./notebooks): exploratory notebooks and usage examples
 - [data/models/](./data/models): sample meshes
@@ -59,7 +59,7 @@ pytype python
 ### Load a mesh
 
 ```python
-from python.mesh import Mesh
+from src.mesh import Mesh
 
 mesh = Mesh.from_file("data/models/monkey.stl")
 print(mesh.vertex_count, mesh.triangle_count)
@@ -69,8 +69,8 @@ print(mesh.bounds)
 ### Generate a voxelmap and pointshell
 
 ```python
-from python.generate_pointshell import generate_pointshell
-from python.generate_voxelmap import generate_voxelmap
+from src.generate_pointshell import generate_pointshell
+from src.generate_voxelmap import generate_voxelmap
 
 voxelmap = generate_voxelmap(mesh, voxel_size=0.2)
 pointshell = generate_pointshell(mesh, voxel_size=0.2, target_spheres=32)
@@ -84,7 +84,7 @@ print(pointshell.point_count, pointshell.sphere_count)
 ```python
 import numpy as np
 
-from python.proximity_query import proximity_query
+from src.proximity_query import proximity_query
 
 transform = np.eye(4)
 transform[:3, 3] = np.array([0.1, 0.0, 0.0])
@@ -105,7 +105,7 @@ for hit in query.hits:
 ### Run a collision query
 
 ```python
-from python.collision_detection import detect_collision
+from src.collision_detection import detect_collision
 
 collision = detect_collision(
     voxelmap,
@@ -122,7 +122,7 @@ print(collision.total_torque)
 ### Build visualization scenes
 
 ```python
-from python.viewer import (
+from src.viewer import (
     create_mesh_scene,
     create_pointshell_scene,
     create_query_scene,

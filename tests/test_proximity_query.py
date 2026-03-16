@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from python.proximity_query import proximity_query
+from src.proximity_query import proximity_query
 
 
 def test_proximity_query_returns_deepest_points(

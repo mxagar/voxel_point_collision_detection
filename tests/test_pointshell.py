@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from python.pointshell import Pointshell
+from src.pointshell import Pointshell
 
 
 def test_pointshell_metadata_is_consistent(synthetic_pointshell: Pointshell) -> None:

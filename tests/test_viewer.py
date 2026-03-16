@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from python.proximity_query import proximity_query
-from python.viewer import (
+from src.proximity_query import proximity_query
+from src.viewer import (
     create_mesh_scene,
     create_pointshell_scene,
     create_query_scene,

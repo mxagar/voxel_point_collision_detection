@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from python.collision_detection import detect_collision
+from src.collision_detection import detect_collision
 
 
 def test_collision_detection_reports_no_collision_when_separated(

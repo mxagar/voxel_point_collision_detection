@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from python.generate_pointshell import generate_pointshell
-from python.mesh import Mesh
+from src.generate_pointshell import generate_pointshell
+from src.mesh import Mesh
 
 
 def test_generate_pointshell_from_box(box_mesh_path) -> None:

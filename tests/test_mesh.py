@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from python.mesh import Mesh
+from src.mesh import Mesh
 
 
 def test_mesh_loads_and_owns_numpy_arrays(model_path) -> None:
