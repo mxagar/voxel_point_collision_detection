@@ -605,3 +605,22 @@ At the end of the implementation, provide:
 4.	next recommended steps
 5.	commands used to run tests, lint, and type checks
 
+## 4
+
+Previous Output inserted to Codex.
+
+### Output
+
+All steps followed and code generated.
+
+## 5
+
+Now:
+
+- Create a notebook with usage examples: generation, visualization, proximity queries, collision queries.
+- Update the README with installation steps and some minor usage examples.
+
+### Output
+
+- [`notebooks/usage_examples.ipynb`](./notebooks/usage_examples.ipynb)
+- [`README.md`](./README.md)
