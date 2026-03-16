@@ -613,6 +613,8 @@ Previous Output inserted to Codex.
 
 All steps followed and code generated.
 
+Duration: 11-12 min.
+
 ## 5
 
 Now:
