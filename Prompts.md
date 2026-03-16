@@ -1,6 +1,18 @@
 # Prompts
 
-## 1
+- [Prompts](#prompts)
+	- [1 File tree](#1-file-tree)
+		- [Output](#output)
+	- [2 Summarize PhD chapter](#2-summarize-phd-chapter)
+		- [Output](#output-1)
+	- [3 Ellaborate implementation prompt](#3-ellaborate-implementation-prompt)
+		- [Output](#output-2)
+	- [4 Run ellaborated implementation prompt](#4-run-ellaborated-implementation-prompt)
+		- [Output](#output-3)
+	- [5 Update README and create usage examples notebook](#5-update-readme-and-create-usage-examples-notebook)
+		- [Output](#output-4)
+
+## 1 File tree
 
 Show me a tree of all the files you see in the project folder.
 
@@ -77,7 +89,7 @@ voxel_point_collision_detection
 
 ```
 
-## 2
+## 2 Summarize PhD chapter
 
 I would like to re-implement proximity and collision detection queries using the voxelmap-pointshell algorithm, or a version of it. I have laid the PDF doc/Sagardia_PhD_Chapter3_2019.pdf where the original algorithm and its implementation are explained in detail. I don't want that precise implementation, but that's a sort of reference. Please, look at the PDF and make a technical summary in it (you can add small pieces of python code) which you will save in that same folder doc/Sagardia_PhD_Chapter3_Summary.md. You are going to be using that summary as reference later.
 
@@ -87,7 +99,7 @@ Before finishing the summary, have a look at the notebooks/ folder. I Have some 
 
 [`Sagardia_PhD_Chapter3_Summary.md`](./doc/Sagardia_PhD_Chapter3_Summary.md)
 
-## 3
+## 3 Ellaborate implementation prompt
 
 > I would like to prompt the codex agent to build a project. To that end, I have created the following main prompt. I attach some references I explain in it, too: notebooks/numpy_tests.ipynb, doc/Sagardia_PhD_Chapter3_Summary.md.
 
@@ -605,7 +617,7 @@ At the end of the implementation, provide:
 4.	next recommended steps
 5.	commands used to run tests, lint, and type checks
 
-## 4
+## 4 Run ellaborated implementation prompt
 
 Previous Output inserted to Codex.
 
@@ -615,7 +627,7 @@ All steps followed and code generated.
 
 Duration: 11-12 min.
 
-## 5
+## 5 Update README and create usage examples notebook
 
 Now:
 
