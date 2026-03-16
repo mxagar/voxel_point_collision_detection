@@ -4,3 +4,11 @@ build
 __pycache__
 .ipynb_checkpoints
 requirements.txt
+.venv
+venv
+.pytest_cache
+*.pyc
+*.pyo
+*.pyd
+*.log
+_generated_examples

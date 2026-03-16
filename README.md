@@ -27,9 +27,18 @@ python -m pip install -e .
 ### Option 2: use a plain virtual environment
 
 ```bash
+# Create conda env
+conda env create -f conda.yaml
+conda activate vps
+
+# ... or create venv in your running Python distro
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install --upgrade pip
+
+# Then, install dependencies
+python -m pip install -U pip
+python -m pip install -U pip-tools
+pip-compile requirements.in
 python -m pip install -r requirements.txt
 python -m pip install -e .
 ```
