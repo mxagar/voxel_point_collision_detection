@@ -46,11 +46,11 @@ pytype python
 
 ## Project Layout
 
-- [python/](/Users/mxagar/nexo/git_repositories/voxel_point_collision_detection/python): package source code
-- [tests/](/Users/mxagar/nexo/git_repositories/voxel_point_collision_detection/tests): pytest suite
-- [notebooks/](/Users/mxagar/nexo/git_repositories/voxel_point_collision_detection/notebooks): exploratory notebooks and usage examples
-- [data/models/](/Users/mxagar/nexo/git_repositories/voxel_point_collision_detection/data/models): sample meshes
-- [doc/Sagardia_PhD_Chapter3_Summary.md](/Users/mxagar/nexo/git_repositories/voxel_point_collision_detection/doc/Sagardia_PhD_Chapter3_Summary.md): implementation-oriented technical summary of the reference chapter
+- [python/](./python): package source code
+- [tests/](./tests): pytest suite
+- [notebooks/](./notebooks): exploratory notebooks and usage examples
+- [data/models/](./data/models): sample meshes
+- [doc/Sagardia_PhD_Chapter3_Summary.md](./doc/Sagardia_PhD_Chapter3_Summary.md): implementation-oriented technical summary of the reference chapter
 
 ## Minor Usage Examples
 
@@ -141,7 +141,7 @@ query_scene = create_query_scene(voxelmap, pointshell, query, transform=transfor
 
 ## Notebook Example
 
-A small end-to-end notebook is available at [notebooks/usage_examples.ipynb](/Users/mxagar/nexo/git_repositories/voxel_point_collision_detection/notebooks/usage_examples.ipynb). It covers:
+A small end-to-end notebook is available at [notebooks/usage_examples.ipynb](./notebooks/usage_examples.ipynb). It covers:
 
 - generation
 - visualization
@@ -158,11 +158,10 @@ A small end-to-end notebook is available at [notebooks/usage_examples.ipynb](/Us
 
 ## References
 
-- McNeely et al., original VPS work
-- Sagardia, Chapter 3 reference material summarized in [doc/Sagardia_PhD_Chapter3_Summary.md](/Users/mxagar/nexo/git_repositories/voxel_point_collision_detection/doc/Sagardia_PhD_Chapter3_Summary.md)
+- McNeely et al., original VPS work.
+- My [PhD](https://elib.dlr.de/132879/), specifically, [Chapter 3](./doc/Sagardia_PhD_Chapter3_2019.pdf), which is summarized in [doc/Sagardia_PhD_Chapter3_Summary.md](./doc/Sagardia_PhD_Chapter3_Summary.md)
 - `trimesh`: https://github.com/mikedh/trimesh
 
 ## Authorship
 
 Mikel Sagardia, 2024.  
-Repository implementation updated with a Python package structure, tests, and examples.
