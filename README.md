@@ -15,7 +15,7 @@ A quick recipe to getting started by using [conda](https://conda.io/projects/con
 # Set proxy, if required
 
 # Create environment, e.g., with conda, to control Python version
-conda create -n vps python=3.10 pip
+conda env create -f conda.yaml
 conda activate vps
 
 # Install pip-tools

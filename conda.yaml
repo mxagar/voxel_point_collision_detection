@@ -1,0 +1,11 @@
+# conda env create -f conda.yaml
+# conda remove --name vps --all
+name: vps
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+    - pip-tools
