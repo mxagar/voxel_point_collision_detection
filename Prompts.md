@@ -121,18 +121,19 @@ Notes on Step 2: Proximity and collision detection algorithms:
 Notes on Step 3: Generation of the voxelmap and the pointshell:
 
 - The Voxelmap generation should be done by a separate module (generate_voxelmap.py), which should be able to generate the Voxelmap from a given Mesh. You can follow the same strategy as in the original implementation, which is explained in the doc/Sagardia_PhD_Chapter3_Summary.md file. However, you can also use other strategies, as long as they are able to generate a Voxelmap that is compatible with the algorithms.
-- The Voxelmap should be a 3D grid of voxels, where each voxel contains an integer, the voxel value. The voxel value should be 0 if the voxel contains triangles (i.e., the voxel collides with triangles), and the we should use layer values, positive inwards, negative outwards. Layer values can be computed using floodfill.
+- The Voxelmap should be a 3D grid of voxels, where each voxel contains an integer, the voxel value. The voxel value should be 0 if the voxel contains triangles (i.e., the voxel collides with triangles), and the we should use layer values, positive inwards, negative outwards. Layer values can be computed using floodfill. We can check whether a voxel collides with triangles with the Separating Axis Theorem (SAT) or with the triangle-box intersection test, as explained in the doc/Sagardia_PhD_Chapter3_Summary.md file.
 - The Pointshell generation should be done by a separate module (generate_pointshell.py), which should be able to generate the Pointshell from a given Mesh. You can follow the same strategy as in the original implementation, which is explained in the doc/Sagardia_PhD_Chapter3_Summary.md file. However, you can also use other strategies, as long as they are able to generate a Pointshell that is compatible with the algorithms.
-- In the original implementation, first a Voxelmap is generated, and then the voxel centers are projected onto the surface of the mesh to create the points of the Pointshell. Then, the points need to be clustered in N patches, containing each patch a similar amount of points and a sphere which contains them. And then, we need to order the points in each patch by level of detail. **HERE**
+- In the original implementation, first a Voxelmap of the Pointshell object is generated, and then the voxel centers are projected onto the surface of the mesh to create the points of the Pointshell. Then, the points need to be clustered in N patches, containing each patch a similar amount of points and a sphere which contains them. And then, we need to order the points in each patch by level of detail. It is up to you how to create these levels of detail and the N sphere/surface patches. In the implementation explained in the doc/Sagardia_PhD_Chapter3_Summary.md file, first all points are created. Then, they are grouped in clusters of points according to their distance; each cluster has a parent point, and these are clustered, too, to create the next higher level of detail. So the approach is a bottom-up hierarchical clustering. But you can also use a top-down approach, or any other approach, as long as it is able to create a Pointshell that is compatible with the algorithms. If you want, the value of N doesn't have to be a parameter fixed by the user, but the user asks the closest N value possible in the hierarchy of the Pointshell. This is up to you.
+- Do not use minimally bounding spheres, but use spheres that are centered in the centroid of the points contained in the sphere, and with a radius equal to the distance from the centroid to the farthest point contained in the sphere. This is a simpler approach, and it is good enough for our purposes.
 
 Notes on Step 4: Visualization:
+
+- The viewer should be able to visualize the mesh, the voxelmap, and the pointshell, as well as the results of the proximity and collision queries.
+- First, focus on visualizing the data structures and not the algorithms. For the algorithms, you can visualize the results in a second step, once you have the data structures implemented and working.
 
 General notes:
 
 - Modularize the code as much as possible.
-
-Notes on the tech/library stack and the project structure:
-
 - Use the environment specified in conda.yaml and requirements.in.
 - Use numpy for the data structures and algorithms; use the python/ folder for that
 - Use TriMesh and Open3D for 3D input parsing and visualization; prefer TriMesh. However, the implementation of the data structures and the algorithms should be done by hand, using numpy for the data structures and algorithms.
