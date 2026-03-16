@@ -14,3 +14,4 @@ venv
 _generated_examples
 .pytype
 .codex
+*.egg*
